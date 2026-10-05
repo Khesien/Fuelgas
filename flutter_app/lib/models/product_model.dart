@@ -8,6 +8,8 @@ class CylinderProductModel {
   final bool isActive;
   final bool popular;
 
+  double get basePrice => sizeKg * 22.0;
+
   CylinderProductModel({
     required this.productId,
     required this.size,
