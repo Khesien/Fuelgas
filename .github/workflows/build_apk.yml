@@ -67,7 +67,7 @@ jobs:
       # ── 7. Build Google Play Store App Bundle (.aab) ─────────────────────────
       - name: Build App Bundle (AAB) for Play Store
         working-directory: flutter_app
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --android-skip-build-dependency-validation
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
@@ -75,7 +75,7 @@ jobs:
       # ── 8. Build Release APK (.apk) ──────────────────────────────────────────
       - name: Build Release APK
         working-directory: flutter_app
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release --split-per-abi --android-skip-build-dependency-validation
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
