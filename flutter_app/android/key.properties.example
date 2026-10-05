@@ -1,0 +1,8 @@
+# Google Play Store Release Keystore Configuration
+# Place this file as 'key.properties' in 'flutter_app/android/'
+# NEVER commit your actual release.keystore to public Git!
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=../upload-keystore.jks

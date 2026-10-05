@@ -1,0 +1,37 @@
+name: gas_mobile
+description: A high-performance Flutter mobile application for LPG Gas Delivery for Customers and Service Providers, powered by Supabase.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Supabase & Backend
+  supabase_flutter: ^2.5.0
+
+  # State Management
+  provider: ^6.1.2
+
+  # UI, Icons, Typography & Animations
+  google_fonts: ^6.2.1
+  lucide_icons: ^0.252.0
+  intl: ^0.19.0
+  uuid: ^4.4.0
+
+  # Networking & Caching
+  cached_network_image: ^3.3.1
+  http: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
