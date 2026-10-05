@@ -23,14 +23,44 @@ class _ProviderAdminInventoryScreenState
     final state = Provider.of<AppStateProvider>(context);
     final provider = state.selectedProvider;
 
+    if (provider == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Provider Admin'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (ctx) => const RoleSwitchSheet(),
+                );
+              },
+              icon: const Icon(Icons.swap_horiz, color: AppColors.statusPreparing),
+            ),
+          ],
+        ),
+        body: const Center(
+          child: Text(
+            'No gas provider found or selected.\nPlease configure providers in Supabase.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
+      );
+    }
+
     final depots = state.depots
         .where((d) => d.providerId == provider.providerId)
         .toList();
 
-    final activeDepot = state.depots.firstWhere(
-      (d) => d.depotId == _selectedDepotId,
-      orElse: () => state.depots.first,
-    );
+    final activeDepot = depots.isNotEmpty
+        ? depots.firstWhere(
+            (d) => d.depotId == _selectedDepotId,
+            orElse: () => depots.first,
+          )
+        : (state.depots.isNotEmpty ? state.depots.first : null);
 
     return Scaffold(
       appBar: AppBar(
@@ -75,64 +105,77 @@ class _ProviderAdminInventoryScreenState
               const SizedBox(height: 16),
 
               // Depot Location Info
-              GlassContainer(
-                padding: const EdgeInsets.all(14),
-                child: Row(
+              if (activeDepot != null) ...[
+                GlassContainer(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.storefront,
+                          color: Color(0xFF3B82F6), size: 22),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              activeDepot.name,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            Text(
+                              '${activeDepot.address} • Phone: ${activeDepot.contactPhone}',
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Inventory Stock Levels
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.storefront,
-                        color: Color(0xFF3B82F6), size: 22),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            activeDepot.name,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Text(
-                            '${activeDepot.address} • Phone: ${activeDepot.contactPhone}',
-                            style: const TextStyle(
-                                color: AppColors.textSecondary, fontSize: 11),
-                          ),
-                        ],
+                    const Text(
+                      'CYLINDER STOCK INVENTORY',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      'Total Units: ${activeDepot.stock.values.fold(0, (a, b) => a + b)}',
+                      style: const TextStyle(
+                        color: AppColors.brandCyan,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              // Inventory Stock Levels
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'CYLINDER STOCK INVENTORY',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
+                const SizedBox(height: 10),
+                ...state.products.map(
+                  (p) => _buildStockRow(state, activeDepot, p),
+                ),
+              ] else ...[
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Text(
+                      'No depots configured for this provider.\nAdd depot records in the Supabase depots table.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
-                  Text(
-                    'Total Units: ${activeDepot.stock.values.fold(0, (a, b) => a + b)}',
-                    style: const TextStyle(
-                      color: AppColors.brandCyan,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              ...state.products.map(
-                (p) => _buildStockRow(state, activeDepot, p),
-              ),
+                ),
+              ],
               const SizedBox(height: 20),
 
               // Active Drivers Fleet Roster

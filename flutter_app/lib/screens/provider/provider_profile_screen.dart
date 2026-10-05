@@ -15,6 +15,37 @@ class ProviderProfileScreen extends StatelessWidget {
     final driver = state.activeDriver;
     final provider = state.selectedProvider;
 
+    if (driver == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Partner Profile',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          actions: [
+            IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (ctx) => const RoleSwitchSheet(),
+                );
+              },
+              icon: const Icon(Icons.swap_horiz, color: AppColors.brandCyan),
+            ),
+          ],
+        ),
+        body: const Center(
+          child: Text(
+            'No driver profile loaded.\nPlease log in or register as a driver.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
+      );
+    }
+
+    final companyName = provider?.companyName ?? 'GasExpress Partner';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Partner Profile',
@@ -64,7 +95,7 @@ class ProviderProfileScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Associated with ${provider.companyName}',
+                            'Associated with $companyName',
                             style: const TextStyle(
                               color: AppColors.brandOrange,
                               fontSize: 12,
@@ -129,7 +160,7 @@ class ProviderProfileScreen extends StatelessWidget {
                     const Icon(Icons.account_balance_wallet,
                         color: AppColors.brandCyan, size: 24),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

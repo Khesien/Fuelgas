@@ -484,7 +484,9 @@ class AppStateProvider extends ChangeNotifier {
     return newOrder;
   }
 
-  void acceptJob(String orderId, String driverId) {
+  String get currency => AppConstants.defaultCurrency;
+
+  void acceptJob(String orderId, [String? driverId]) {
     if (activeDriver == null) return;
     final driver = activeDriver!;
 

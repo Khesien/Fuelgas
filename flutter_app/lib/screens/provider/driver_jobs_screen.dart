@@ -23,6 +23,34 @@ class _DriverJobsScreenState extends State<DriverJobsScreen> {
     final state = Provider.of<AppStateProvider>(context);
     final driver = state.activeDriver;
 
+    if (driver == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Driver Dashboard'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (ctx) => const RoleSwitchSheet(),
+                );
+              },
+              icon: const Icon(Icons.swap_horiz, color: AppColors.brandCyan),
+            ),
+          ],
+        ),
+        body: const Center(
+          child: Text(
+            'No driver profile found.\nPlease register or log in as a driver.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
+      );
+    }
+
     // Active order assigned to this driver
     OrderModel? activeOrder;
     try {
