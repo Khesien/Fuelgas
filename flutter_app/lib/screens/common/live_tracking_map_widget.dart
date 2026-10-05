@@ -140,7 +140,7 @@ class _LiveTrackingMapWidgetState extends State<LiveTrackingMapWidget>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.black89,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -180,7 +180,7 @@ class _LiveTrackingMapWidgetState extends State<LiveTrackingMapWidget>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.black89,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(

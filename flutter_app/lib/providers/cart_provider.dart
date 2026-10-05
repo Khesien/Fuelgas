@@ -57,18 +57,19 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double getUnitPrice(GasProviderModel provider) {
+  double getUnitPrice(GasProviderModel? provider) {
     if (_selectedProduct == null) return 0.0;
+    if (provider == null) return _selectedProduct!.basePrice;
     final prices = provider.prices[_selectedProduct!.productId];
-    if (prices == null) return 0.0;
+    if (prices == null) return _selectedProduct!.basePrice;
     return _orderType == 'exchange' ? prices.exchange : prices.refill;
   }
 
-  double getSubtotal(GasProviderModel provider) {
+  double getSubtotal(GasProviderModel? provider) {
     return getUnitPrice(provider) * _quantity;
   }
 
-  double getDiscountAmount(GasProviderModel provider) {
+  double getDiscountAmount(GasProviderModel? provider) {
     if (_appliedPromo == null) return 0.0;
     final subtotal = getSubtotal(provider);
     if (subtotal < _appliedPromo!.minOrderAmount) return 0.0;
@@ -84,9 +85,9 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  double getGrandTotal(GasProviderModel provider) {
+  double getGrandTotal(GasProviderModel? provider) {
     final subtotal = getSubtotal(provider);
-    final deliveryFee = provider.baseDeliveryFee;
+    final deliveryFee = provider?.baseDeliveryFee ?? 25.0;
     final discount = getDiscountAmount(provider);
     return (subtotal + deliveryFee - discount).clamp(0.0, double.infinity);
   }

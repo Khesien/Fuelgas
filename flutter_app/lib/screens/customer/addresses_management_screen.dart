@@ -178,7 +178,7 @@ class AddressesManagementScreen extends StatelessWidget {
                       onPressed: () {
                         final newAddr = AddressModel(
                           addressId: 'addr-${DateTime.now().millisecondsSinceEpoch}',
-                          userId: state.currentUser.userId,
+                          userId: state.currentUser?.userId ?? 'guest',
                           label: labelCtrl.text.trim(),
                           plotUnit: plotCtrl.text.trim(),
                           street: streetCtrl.text.trim(),

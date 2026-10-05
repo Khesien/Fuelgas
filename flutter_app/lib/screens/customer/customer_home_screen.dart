@@ -487,8 +487,8 @@ class CustomerHomeScreen extends StatelessWidget {
       itemCount: state.products.length,
       itemBuilder: (context, idx) {
         final prod = state.products[idx];
-        final priceTier = state.selectedProvider.prices[prod.productId];
-        final refillPrice = priceTier?.refill ?? 195.0;
+        final priceTier = state.selectedProvider?.prices[prod.productId];
+        final refillPrice = priceTier?.refill ?? prod.basePrice;
 
         return GlassContainer(
           padding: const EdgeInsets.all(12),

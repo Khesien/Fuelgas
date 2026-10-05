@@ -33,7 +33,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final provider = state.selectedProvider;
 
     final subtotal = cart.getSubtotal(provider);
-    final deliveryFee = provider.baseDeliveryFee;
+    final deliveryFee = provider?.baseDeliveryFee ?? 25.0;
     final discount = cart.getDiscountAmount(provider);
     final grandTotal = cart.getGrandTotal(provider);
 
@@ -151,7 +151,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      addr.label,
+                      addr?.label ?? 'No address selected',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -160,7 +160,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      addr.fullAddress,
+                      addr?.fullAddress ?? 'Tap Change to add or select a delivery address',
                       style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 12,
@@ -537,8 +537,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     final unitPrice =
                         cart.getUnitPrice(state.selectedProvider);
 
-                    final order = state.placeOrder(
-                      providerId: state.selectedProviderId,
+                    final order = await state.placeOrder(
+                      providerId: state.selectedProviderId ?? '',
                       items: [
                         OrderItemModel(
                           orderItemId:
@@ -559,7 +559,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           : _selectedPaymentMethod.toUpperCase(),
                       promoCode: cart.appliedPromo?.code,
                       discountAmount: discount,
-                      addressId: state.selectedAddressId,
+                      addressId: state.selectedAddressId ?? '',
                     );
 
                     cart.clearCart();
@@ -567,12 +567,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     if (!mounted) return;
                     setState(() => _isProcessing = false);
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => OrderTrackingScreen(order: order),
-                      ),
-                    );
+                    if (order != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => OrderTrackingScreen(order: order),
+                        ),
+                      );
+                    }
                   },
             child: _isProcessing
                 ? const SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/supabase/supabase_service.dart';
 import '../../providers/app_state_provider.dart';
 import '../common/glass_container.dart';
