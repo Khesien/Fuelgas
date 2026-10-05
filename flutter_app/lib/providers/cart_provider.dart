@@ -58,9 +58,9 @@ class CartProvider extends ChangeNotifier {
   }
 
   double getUnitPrice(GasProviderModel provider) {
-    if (_selectedProduct == null) return 195.0;
+    if (_selectedProduct == null) return 0.0;
     final prices = provider.prices[_selectedProduct!.productId];
-    if (prices == null) return 195.0;
+    if (prices == null) return 0.0;
     return _orderType == 'exchange' ? prices.exchange : prices.refill;
   }
 

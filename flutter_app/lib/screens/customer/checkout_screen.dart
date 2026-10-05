@@ -262,7 +262,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   controller: _promoController,
                   textCapitalization: TextCapitalization.characters,
                   decoration: const InputDecoration(
-                    hintText: 'Enter code: e.g. GAS20',
+                    hintText: 'Enter promo code',
                     isDense: true,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -288,7 +288,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Invalid code. Try GAS20'),
+                        content: Text('Invalid or expired promo code.'),
                         backgroundColor: AppColors.statusCancelled,
                       ),
                     );

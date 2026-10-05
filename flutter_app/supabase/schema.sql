@@ -222,41 +222,37 @@ create policy "Drivers can update own location" on public.drivers for update usi
 create policy "Public can read driver locations" on public.drivers for select using (true);
 
 -- ==============================================================================
--- SEED DATA
+-- SEED DATA — CYLINDER PRODUCT CATALOG ONLY
+-- (Standard LPG cylinder sizes used industry-wide in Botswana)
+-- Gas Providers, Depots, Drivers, and Promotions must be created via the
+-- admin dashboard or Supabase Table Editor — no demo data is seeded here.
 -- ==============================================================================
 
--- Products
+-- Standard Cylinder Products (LPG industry-standard sizes)
 insert into public.products (product_id, size, size_kg, name, description, image_url, is_active, popular) values
-('prod-3kg', '3KG', 3, '3KG Compact Camping Cylinder', 'Ultralight portable cylinder suitable for camping and outdoor burners.', '', true, false),
-('prod-5kg', '5KG', 5, '5KG Small Kitchen Cylinder', 'Space-saving cylinder for compact apartments and single burner setups.', '', true, false),
-('prod-9kg', '9KG', 9, '9KG Household Standard', 'The most popular family cooking cylinder. Reliable, safe, certified.', '', true, true),
-('prod-14kg', '14KG', 14, '14KG Medium Domestic Cylinder', 'Extra capacity for larger households with regular cooking and baking.', '', true, false),
-('prod-19kg', '19KG', 19, '19KG Commercial / Restaurant', 'Ideal for busy residential kitchens, guest houses and local restaurants.', '', true, false),
-('prod-48kg', '48KG', 48, '48KG Industrial Master Cylinder', 'Heavy duty dual-valve cylinder for high-volume commercial catering and heating.', '', true, false)
+('prod-3kg',  '3KG',  3,  '3KG Compact Cylinder',           'Lightweight portable cylinder for camping and single-burner use.',                       '', true, false),
+('prod-5kg',  '5KG',  5,  '5KG Small Kitchen Cylinder',     'Space-saving cylinder for compact apartments.',                                          '', true, false),
+('prod-9kg',  '9KG',  9,  '9KG Household Standard',         'The most popular family cooking cylinder. Reliable, safe, and certified.',               '', true, true),
+('prod-14kg', '14KG', 14, '14KG Medium Domestic Cylinder',  'Extra capacity for larger households with regular cooking and baking.',                   '', true, false),
+('prod-19kg', '19KG', 19, '19KG Commercial / Restaurant',   'Ideal for busy kitchens, guest houses, and local restaurants.',                          '', true, false),
+('prod-48kg', '48KG', 48, '48KG Industrial Master Cylinder', 'Heavy-duty dual-valve cylinder for high-volume commercial catering and heating.',        '', true, false)
 on conflict (product_id) do nothing;
 
--- Gas Providers
-insert into public.gas_providers (provider_id, company_name, slug, logo_url, description, rating, review_count, districts_served, compliance_status, license_number, safety_score, contact_phone, contact_email, base_delivery_fee, est_delivery_mins) values
-('prov-1', 'Apex Gas Botswana', 'apex-gas', '', 'Premier certified LPG manufacturer & distributor. Fast express delivery with 100% leak safety testing.', 4.9, 1240, array['Gaborone Central', 'Broadhurst Industrial', 'Phakalane Estate', 'Gaborone West'], 'approved', 'BW-LPG-88491-APX', 99, '+267 70 001 001', 'contact@apexgas.demo', 25.00, 30),
-('prov-2', 'Kalahari Clean LPG', 'kalahari-clean-lpg', '', 'Local pioneer in household and commercial LPG gas cylinder distribution.', 4.8, 890, array['Gaborone Central', 'Gaborone West', 'Francistown Central'], 'approved', 'BW-LPG-55102-KCL', 97, '+267 70 002 002', 'contact@kalaharigas.demo', 20.00, 35),
-('prov-3', 'Sunrise Energy LPG', 'sunrise-energy', '', 'Global standard gas cylinder refills with instant mobile money checkout.', 4.7, 650, array['Gaborone Central', 'Phakalane Estate', 'Maun'], 'approved', 'BW-LPG-99201-SNR', 98, '+267 70 003 003', 'contact@sunriseenergy.demo', 25.00, 25),
-('prov-4', 'BlueFlame Express', 'blueflame-express', '', 'Industrial and home cooking gas specialist offering bulk & cylinder delivery.', 4.6, 420, array['Broadhurst Industrial', 'Francistown Central'], 'approved', 'BW-LPG-33901-BFE', 95, '+267 70 004 004', 'contact@blueflame.demo', 30.00, 40)
-on conflict (provider_id) do nothing;
+-- ==============================================================================
+-- HOW TO ADD YOUR REAL DATA
+-- ==============================================================================
+-- 1. GAS PROVIDERS: Insert via Supabase Table Editor → gas_providers table
+--    Required fields: provider_id, company_name, slug, license_number,
+--    districts_served, base_delivery_fee, est_delivery_mins
+--
+-- 2. DEPOTS: Insert via Supabase Table Editor → depots table
+--    Required fields: depot_id, provider_id, name, address, district, lat/lng
+--
+-- 3. DRIVERS: Created automatically when a user registers with role='driver'
+--    and their profile is promoted by a provider admin.
+--
+-- 4. PROMOTIONS: Insert via Supabase Table Editor → promotions table
+--    Required fields: promo_id, code, description, discount_type,
+--    discount_value, min_order_amount, valid_until
+-- ==============================================================================
 
--- Depots
-insert into public.depots (depot_id, provider_id, name, location, address, district, latitude, longitude, contact_phone, stock) values
-('depot-1', 'prov-1', 'Apex Broadhurst Main Depot', 'Broadhurst Industrial Area', 'Plot 5621, Lejara Road', 'Broadhurst Industrial', -24.6225, 25.9280, '+267 70 001 002', '{"prod-3kg": 45, "prod-5kg": 30, "prod-9kg": 120, "prod-14kg": 60, "prod-19kg": 35, "prod-48kg": 18}'::jsonb),
-('depot-2', 'prov-2', 'Kalahari G-West Hub', 'G-West Phase 4', 'Plot 12049, Kudumatse Drive', 'Gaborone West', -24.6640, 25.8850, '+267 70 002 003', '{"prod-3kg": 30, "prod-5kg": 25, "prod-9kg": 85, "prod-14kg": 40, "prod-19kg": 20, "prod-48kg": 10}'::jsonb)
-on conflict (depot_id) do nothing;
-
--- Drivers
-insert into public.drivers (driver_id, provider_id, full_name, phone, email, photo_url, vehicle_type, vehicle_number, license_no, rating_avg, completed_orders, status, current_lat, current_lng, verification_status) values
-('drv-1', 'prov-1', 'Kabo Sebego', '+267 70 119 402', 'driver.kabo@gasexpress.internal', '', 'Delivery Van', 'B 849 AKL', 'DL-BW-89102', 4.95, 342, 'online', -24.6490, 25.9180, 'approved'),
-('drv-2', 'prov-2', 'Thabo Molefe', '+267 70 883 201', 'driver.thabo@gasexpress.internal', '', 'Light Truck', 'B 302 BNM', 'DL-BW-77312', 4.88, 280, 'online', -24.6390, 25.9050, 'approved')
-on conflict (driver_id) do nothing;
-
--- Promotions
-insert into public.promotions (promo_id, code, description, discount_type, discount_value, min_order_amount, max_discount_amount, valid_until, is_active) values
-('promo-1', 'GAS20', 'Save P20 on your next 9KG or 14KG cylinder delivery', 'fixed', 20.00, 150.00, null, '2026-12-31T23:59:59Z', true),
-('promo-2', 'WINTERWARM', '15% OFF home heating refill cylinders', 'percentage', 15.00, 200.00, 50.00, '2026-12-31T23:59:59Z', true)
-on conflict (promo_id) do nothing;

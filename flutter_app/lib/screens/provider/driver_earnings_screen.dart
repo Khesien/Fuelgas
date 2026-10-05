@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../models/order_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../common/glass_container.dart';
 
@@ -12,15 +14,39 @@ class DriverEarningsScreen extends StatelessWidget {
     final state = Provider.of<AppStateProvider>(context);
     final driver = state.activeDriver;
 
+    if (driver == null) {
+      return const Scaffold(
+        body: Center(
+          child: Text(
+            'No driver profile found.\nPlease log in as a driver.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
+      );
+    }
+
+    // Only real completed deliveries from Supabase-loaded orders
     final completedOrders = state.orders
         .where((o) => o.driverId == driver.driverId && o.status == 'delivered')
         .toList();
 
-    double todayEarnings = 145.00;
-    for (var o in completedOrders) {
-      todayEarnings += (o.deliveryFee + 10.0);
-    }
-    final weeklyEarnings = todayEarnings + 840.00;
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final weekStart = todayStart.subtract(Duration(days: now.weekday - 1));
+
+    final todayOrders = completedOrders
+        .where((o) => o.updatedAt.isAfter(todayStart))
+        .toList();
+    final weekOrders = completedOrders
+        .where((o) => o.updatedAt.isAfter(weekStart))
+        .toList();
+
+    // Earnings = delivery fee portion paid to driver (configurable in production)
+    final double todayEarnings =
+        todayOrders.fold(0.0, (sum, o) => sum + o.deliveryFee);
+    final double weeklyEarnings =
+        weekOrders.fold(0.0, (sum, o) => sum + o.deliveryFee);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,24 +62,24 @@ class DriverEarningsScreen extends StatelessWidget {
               // Hero Earnings Gradient Card
               _buildEarningsHeroCard(
                 state: state,
-                driver: driver,
                 todayEarnings: todayEarnings,
                 weeklyEarnings: weeklyEarnings,
-                completedCount: driver.completedOrders + completedOrders.length,
+                completedCount: driver.completedOrders,
+                todayCount: todayOrders.length,
               ),
               const SizedBox(height: 16),
 
               // Payout Action Bar
-              _buildPayoutButton(context),
+              _buildPayoutButton(context, todayEarnings),
               const SizedBox(height: 16),
 
-              // Metrics Row: Acceptance Rate & Rating
-              _buildMetricsRow(driver),
+              // Metrics Row: Rating & Completion
+              _buildMetricsRow(driver, completedOrders.length),
               const SizedBox(height: 20),
 
-              // Recent Deliveries Ledger
+              // Delivered trips ledger
               const Text(
-                'RECENT DELIVERIES LEDGER',
+                'DELIVERY HISTORY',
                 style: TextStyle(
                   color: AppColors.textMuted,
                   fontSize: 11,
@@ -73,10 +99,10 @@ class DriverEarningsScreen extends StatelessWidget {
 
   Widget _buildEarningsHeroCard({
     required AppStateProvider state,
-    required dynamic driver,
     required double todayEarnings,
     required double weeklyEarnings,
     required int completedCount,
+    required int todayCount,
   }) {
     return Container(
       width: double.infinity,
@@ -100,7 +126,7 @@ class DriverEarningsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'TODAY\'S TOTAL EARNINGS',
+            "TODAY'S EARNINGS",
             style: TextStyle(
               color: Colors.white70,
               fontSize: 11,
@@ -117,6 +143,10 @@ class DriverEarningsScreen extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
+          Text(
+            '$todayCount deliveries today',
+            style: const TextStyle(color: Colors.white54, fontSize: 12),
+          ),
           const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.only(top: 14),
@@ -130,7 +160,8 @@ class DriverEarningsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('THIS WEEK',
-                        style: TextStyle(color: Colors.white60, fontSize: 10)),
+                        style:
+                            TextStyle(color: Colors.white60, fontSize: 10)),
                     const SizedBox(height: 2),
                     Text(
                       '${state.currency}${weeklyEarnings.toStringAsFixed(2)}',
@@ -145,8 +176,9 @@ class DriverEarningsScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('COMPLETED TRIPS',
-                        style: TextStyle(color: Colors.white60, fontSize: 10)),
+                    const Text('TOTAL TRIPS',
+                        style:
+                            TextStyle(color: Colors.white60, fontSize: 10)),
                     const SizedBox(height: 2),
                     Text(
                       '$completedCount',
@@ -166,31 +198,34 @@ class DriverEarningsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPayoutButton(BuildContext context) {
+  Widget _buildPayoutButton(BuildContext context, double amount) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Payout requested! Funds transferred to your Orange Money wallet.'),
-              backgroundColor: AppColors.brandGreen,
-            ),
-          );
-        },
+        onPressed: amount > 0
+            ? () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Payout request submitted. Funds will be transferred to your mobile wallet.'),
+                    backgroundColor: AppColors.brandGreen,
+                  ),
+                );
+              }
+            : null,
         icon: const Icon(Icons.account_balance_wallet),
-        label: const Text('Request Express Payout (Orange Money / MyZaka)'),
+        label: const Text('Request Payout (Orange Money / MyZaka)'),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.brandCyan,
           foregroundColor: AppColors.textDark,
+          disabledBackgroundColor: AppColors.brandCyan.withOpacity(0.3),
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );
   }
 
-  Widget _buildMetricsRow(dynamic driver) {
+  Widget _buildMetricsRow(dynamic driver, int sessionCompleted) {
     return Row(
       children: [
         Expanded(
@@ -211,7 +246,7 @@ class DriverEarningsScreen extends StatelessWidget {
                         color: AppColors.brandAmber, size: 20),
                     const SizedBox(width: 6),
                     Text(
-                      '${driver.ratingAvg}',
+                      driver.ratingAvg.toStringAsFixed(2),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -228,18 +263,18 @@ class DriverEarningsScreen extends StatelessWidget {
         Expanded(
           child: GlassContainer(
             padding: const EdgeInsets.all(14),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ON-TIME RATE',
+                const Text('TOTAL COMPLETED',
                     style: TextStyle(
                         color: AppColors.textMuted,
                         fontSize: 10,
                         fontWeight: FontWeight.w800)),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  '99.1%',
-                  style: TextStyle(
+                  '${driver.completedOrders}',
+                  style: const TextStyle(
                     color: AppColors.brandGreen,
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
@@ -254,22 +289,46 @@ class DriverEarningsScreen extends StatelessWidget {
   }
 
   Widget _buildLedgerList(
-      AppStateProvider state, List<dynamic> completedOrders) {
-    final mockTrips = [
-      {'id': 'TRIP-9901', 'payout': 35.00, 'loc': 'Broadhurst Industrial', 'time': '1 hour ago'},
-      {'id': 'TRIP-9884', 'payout': 40.00, 'loc': 'Extension 9, Central', 'time': '3 hours ago'},
-      {'id': 'TRIP-9720', 'payout': 35.00, 'loc': 'Phakalane Estate', 'time': 'Yesterday'},
-    ];
+      AppStateProvider state, List<OrderModel> completedOrders) {
+    if (completedOrders.isEmpty) {
+      return GlassContainer(
+        padding: const EdgeInsets.all(24),
+        child: const Center(
+          child: Column(
+            children: [
+              Icon(Icons.receipt_long_outlined,
+                  color: AppColors.textMuted, size: 36),
+              SizedBox(height: 12),
+              Text(
+                'No completed deliveries yet.',
+                style: TextStyle(
+                    color: AppColors.textSecondary, fontSize: 13),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Completed trips will appear here.',
+                style:
+                    TextStyle(color: AppColors.textMuted, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: mockTrips.length,
+      itemCount: completedOrders.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, idx) {
-        final t = mockTrips[idx];
+        final o = completedOrders[idx];
+        final formattedTime =
+            DateFormat('dd MMM • h:mm a').format(o.updatedAt);
+
         return GlassContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -288,14 +347,19 @@ class DriverEarningsScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(t['id'] as String,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800)),
-                      Text(t['loc'] as String,
-                          style: const TextStyle(
-                              color: AppColors.textSecondary, fontSize: 11)),
+                      Text(
+                        o.humanId,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        o.address?.district ?? 'Delivery',
+                        style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 11),
+                      ),
                     ],
                   ),
                 ],
@@ -304,16 +368,18 @@ class DriverEarningsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '+${state.currency}${(t['payout'] as double).toStringAsFixed(2)}',
+                    '+${state.currency}${o.deliveryFee.toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: AppColors.brandGreen,
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  Text(t['time'] as String,
-                      style: const TextStyle(
-                          color: AppColors.textMuted, fontSize: 10)),
+                  Text(
+                    formattedTime,
+                    style: const TextStyle(
+                        color: AppColors.textMuted, fontSize: 10),
+                  ),
                 ],
               ),
             ],

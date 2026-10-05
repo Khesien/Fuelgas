@@ -234,6 +234,9 @@ class CustomerHomeScreen extends StatelessWidget {
   }
 
   Widget _buildPromoBanner(BuildContext context) {
+    final state = Provider.of<AppStateProvider>(context, listen: false);
+    final activePromo = state.promotions.isNotEmpty ? state.promotions.first : null;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -258,32 +261,55 @@ class CustomerHomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'PROMO CODE: GAS20',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
+                if (activePromo != null) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'CODE: ${activePromo.code}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Get P20 OFF Your First Gas Cylinder',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    height: 1.2,
+                  const SizedBox(height: 6),
+                  Text(
+                    activePromo.description,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                ] else ...[
+                  const Text(
+                    'CERTIFIED LPG DELIVERY',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Safe. Fast. Doorstep Delivery.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 4),
                 const Text(
                   'Certified leak testing & same-day delivery.',
@@ -306,6 +332,7 @@ class CustomerHomeScreen extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildSectionHeader(
       {required String title, required String subtitle}) {

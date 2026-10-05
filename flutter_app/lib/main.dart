@@ -6,13 +6,14 @@ import 'core/supabase/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/app_state_provider.dart';
 import 'providers/cart_provider.dart';
+import 'screens/common/auth_screen.dart';
 import 'screens/customer/customer_main_nav.dart';
 import 'screens/provider/provider_main_nav.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set system UI overlay style
+  // System UI styling
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -22,7 +23,7 @@ void main() async {
     ),
   );
 
-  // Initialize Supabase if credentials are configured
+  // Initialize Supabase (no-op if credentials not yet set)
   await SupabaseService().initialize();
 
   runApp(const GasDeliveryApp());
@@ -42,20 +43,27 @@ class GasDeliveryApp extends StatelessWidget {
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
-        home: const RoleRouterScreen(),
+        home: const AppRouter(),
       ),
     );
   }
 }
 
-/// Routes dynamically based on the active role selected by user
-class RoleRouterScreen extends StatelessWidget {
-  const RoleRouterScreen({super.key});
+/// Routes between AuthScreen ↔ Customer ↔ Provider/Driver
+/// based on login state and role — no hardcoded routing.
+class AppRouter extends StatelessWidget {
+  const AppRouter({super.key});
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppStateProvider>(context);
 
+    // Show auth screen if no user is logged in
+    if (!state.isLoggedIn) {
+      return const AuthScreen();
+    }
+
+    // Route by role
     switch (state.activeRole) {
       case UserRole.customer:
         return const CustomerMainNav();

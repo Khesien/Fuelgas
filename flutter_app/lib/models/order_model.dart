@@ -34,10 +34,10 @@ class OrderItemModel {
       product: json['product'] != null
           ? CylinderProductModel.fromJson(json['product'])
           : CylinderProductModel(
-              productId: json['product_id'] ?? 'prod-9kg',
-              size: '9KG',
-              sizeKg: 9.0,
-              name: '9KG Household Standard',
+              productId: json['product_id'] ?? '',
+              size: '',
+              sizeKg: 0.0,
+              name: '',
               description: '',
               imageUrl: '',
             ),

@@ -27,6 +27,7 @@ class AppColors {
   static const Color textDark = Color(0xFF0F172A);
 
   // Status Colors
+  static const Color danger = Color(0xFFF87171);
   static const Color statusPending = Color(0xFFFFB703);
   static const Color statusConfirmed = Color(0xFF00F0FF);
   static const Color statusPreparing = Color(0xFFA855F7);

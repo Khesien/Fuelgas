@@ -103,9 +103,9 @@ class ProviderProfileScreen extends StatelessWidget {
                   children: [
                     _buildDocTile('Driver License No.', driver.licenseNo, true),
                     const Divider(color: AppColors.borderColor, height: 18),
-                    _buildDocTile('LPG Transport Permit', 'BW-TP-40910', true),
+                    _buildDocTile('LPG Transport Permit', driver.verificationStatus == 'approved' ? 'Verified ✓' : 'Pending Verification', driver.verificationStatus == 'approved'),
                     const Divider(color: AppColors.borderColor, height: 18),
-                    _buildDocTile('Vehicle Roadworthiness', 'Valid till Dec 2026', true),
+                    _buildDocTile('Vehicle Roadworthiness', 'See depot admin for certificate', true),
                   ],
                 ),
               ),
@@ -134,14 +134,14 @@ class ProviderProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Orange Money Wallet',
+                            'Mobile Wallet',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700),
                           ),
                           Text(
-                            '+267 72 119 402 • Instant Daily Payouts',
+                            driver.phone.isNotEmpty ? driver.phone : 'No payout number set',
                             style: TextStyle(
                                 color: AppColors.textSecondary, fontSize: 11),
                           ),
