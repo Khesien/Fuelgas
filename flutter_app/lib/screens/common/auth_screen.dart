@@ -235,25 +235,36 @@ class _AuthScreenState extends State<AuthScreen>
     return Column(
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.brandOrange, AppColors.brandOrangeDark],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: AppColors.brandOrange.withOpacity(0.4),
+                color: AppColors.brandOrange.withOpacity(0.35),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Icon(Icons.local_fire_department,
-              color: Colors.white, size: 38),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Image.asset(
+              'assets/images/app_icon.png',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.brandOrange, AppColors.brandOrangeDark],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: const Icon(Icons.local_fire_department,
+                    color: Colors.white, size: 40),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 16),
         const Text(

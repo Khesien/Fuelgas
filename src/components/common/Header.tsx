@@ -31,14 +31,18 @@ export const Header: React.FC<HeaderProps> = ({
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            background: 'linear-gradient(135deg, #ff6b00, #ff8833)',
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(255,107,0,0.5)',
+            boxShadow: '0 0 12px rgba(255,107,0,0.3)',
           }}
         >
-          <Flame size={22} color="#ffffff" />
+          <img
+            src="/app-icon.png"
+            alt="GasExpress Logo"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </div>
         <div>
           <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.1 }}>
