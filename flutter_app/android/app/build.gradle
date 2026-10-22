@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.gasexpress.delivery"
+    namespace "com.fuelgas.myapp"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -49,7 +49,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gasexpress.delivery"
+        applicationId "com.fuelgas.myapp"
         minSdkVersion 21
         targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
