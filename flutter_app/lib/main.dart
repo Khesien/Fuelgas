@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'providers/app_state_provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/common/auth_screen.dart';
+import 'screens/common/splash_screen.dart';
 import 'screens/customer/customer_main_nav.dart';
 import 'screens/provider/provider_main_nav.dart';
 
@@ -18,8 +19,8 @@ void main() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFF0B0F19),
-      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
@@ -42,8 +43,8 @@ class GasDeliveryApp extends StatelessWidget {
       child: MaterialApp(
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        home: const AppRouter(),
+        theme: AppTheme.lightTheme,
+        home: const SplashScreen(),
       ),
     );
   }

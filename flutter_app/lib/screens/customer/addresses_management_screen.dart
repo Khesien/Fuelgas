@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/address_model.dart';
 import '../../providers/app_state_provider.dart';
-import '../common/glass_container.dart';
 
 class AddressesManagementScreen extends StatelessWidget {
   const AddressesManagementScreen({super.key});
@@ -13,96 +13,132 @@ class AddressesManagementScreen extends StatelessWidget {
     final state = Provider.of<AppStateProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Saved Addresses',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        title: Text(
+          'Delivery Addresses',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: SafeArea(
         child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           itemCount: state.addresses.length,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, idx) {
             final addr = state.addresses[idx];
             final isSelected = addr.addressId == state.selectedAddressId;
 
-            return GlassContainer(
+            return Container(
               padding: const EdgeInsets.all(16),
-              borderColor:
-                  isSelected ? AppColors.brandOrange : AppColors.borderColor,
-              onTap: () {
-                state.setSelectedAddress(addr.addressId);
-                Navigator.pop(context);
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    color: isSelected
-                        ? AppColors.brandOrange
-                        : Colors.white70,
-                    size: 24,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primaryBlue
+                      : AppColors.borderColor,
+                  width: isSelected ? 1.5 : 1.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              addr.label,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            if (isSelected) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.brandOrangeDark,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  'DEFAULT',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w800),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          addr.fullAddress,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isSelected)
-                    const Icon(Icons.check_circle,
-                        color: AppColors.brandOrange, size: 20),
                 ],
+              ),
+              child: InkWell(
+                onTap: () {
+                  state.setSelectedAddress(addr.addressId);
+                  Navigator.pop(context);
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: isSelected
+                          ? AppColors.primaryBlue
+                          : AppColors.textMuted,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                addr.label,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              if (isSelected) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.tileBlueBg,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    'DEFAULT',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.primaryBlue,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            addr.fullAddress,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isSelected)
+                      const Icon(Icons.check_circle,
+                          color: AppColors.primaryBlue, size: 20),
+                  ],
+                ),
               ),
             );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.brandOrange,
+        backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Add Address',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+        label: Text(
+          'Add Address',
+          style: GoogleFonts.plusJakartaSans(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         onPressed: () => _showAddAddressDialog(context, state),
       ),
     );
@@ -117,7 +153,7 @@ class AddressesManagementScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSecondary,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -135,12 +171,13 @@ class AddressesManagementScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Add New Delivery Address',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -160,7 +197,7 @@ class AddressesManagementScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     value: selectedDistrict,
-                    dropdownColor: AppColors.bgCard,
+                    dropdownColor: Colors.white,
                     decoration: const InputDecoration(labelText: 'District'),
                     items: state.districts
                         .map((d) => DropdownMenuItem(value: d, child: Text(d)))

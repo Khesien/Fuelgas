@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/order_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../common/app_avatar.dart';
-import '../common/glass_container.dart';
 import '../common/live_tracking_map_widget.dart';
 import '../common/status_badge.dart';
 
@@ -24,9 +24,22 @@ class OrderTrackingScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Track ${liveOrder.humanId}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        title: Text(
+          'Track ${liveOrder.humanId}',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -36,7 +49,7 @@ class OrderTrackingScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -76,28 +89,32 @@ class OrderTrackingScreen extends StatelessWidget {
   }
 
   Widget _buildOtpCard(OrderModel order) {
-    return GlassContainer(
-      backgroundColor: const Color(0xFF1E293B),
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.tileBlueBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'DELIVERY VERIFICATION OTP',
-                style: TextStyle(
-                  color: AppColors.textMuted,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.primaryBlue,
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 'Share code with driver upon cylinder check',
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                 ),
@@ -107,14 +124,14 @@ class OrderTrackingScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.brandOrange.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.brandOrange),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.primaryBlue, width: 1.5),
             ),
             child: Text(
               order.otpCode,
-              style: const TextStyle(
-                color: AppColors.brandOrange,
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.primaryBlue,
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -127,8 +144,13 @@ class OrderTrackingScreen extends StatelessWidget {
   }
 
   Widget _buildDriverCard(BuildContext context, dynamic driver) {
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Row(
         children: [
           AppAvatar(
@@ -143,8 +165,8 @@ class OrderTrackingScreen extends StatelessWidget {
               children: [
                 Text(
                   driver.fullName,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                   ),
@@ -152,7 +174,7 @@ class OrderTrackingScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '${driver.vehicleType} • ${driver.vehicleNumber}',
-                  style: const TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     color: AppColors.textSecondary,
                     fontSize: 11,
                   ),
@@ -161,12 +183,12 @@ class OrderTrackingScreen extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(Icons.star,
-                        color: AppColors.brandAmber, size: 14),
+                        color: AppColors.flameAmber, size: 14),
                     const SizedBox(width: 4),
                     Text(
                       '${driver.ratingAvg}',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textPrimary,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
@@ -174,7 +196,7 @@ class OrderTrackingScreen extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       '${driver.completedOrders} deliveries',
-                      style: const TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textMuted,
                         fontSize: 10,
                       ),
@@ -187,19 +209,17 @@ class OrderTrackingScreen extends StatelessWidget {
           IconButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Calling driver ${driver.fullName}...'),
-                  backgroundColor: AppColors.brandOrange,
-                ),
+                SnackBar(content: Text('Calling ${driver.phone}...')),
               );
             },
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
-                color: AppColors.brandOrange,
+                color: AppColors.tileBlueBg,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.phone, color: Colors.white, size: 18),
+              child: const Icon(Icons.phone,
+                  color: AppColors.primaryBlue, size: 18),
             ),
           ),
         ],
@@ -209,26 +229,28 @@ class OrderTrackingScreen extends StatelessWidget {
 
   Widget _buildDeliveryProgressStepper(OrderModel order) {
     final steps = [
-      {'status': 'confirmed', 'title': 'Order Confirmed', 'desc': 'Payment authorized'},
-      {'status': 'preparing', 'title': 'Preparing at Depot', 'desc': 'Cylinder inspected & tagged'},
-      {'status': 'out_for_delivery', 'title': 'Out for Delivery', 'desc': 'Driver en route to your address'},
-      {'status': 'delivered', 'title': 'Delivered & Connected', 'desc': 'Safety leak test completed'},
+      {'status': 'confirmed', 'title': 'Order Confirmed', 'desc': 'Depot preparing'},
+      {'status': 'preparing', 'title': 'Filled & Inspected', 'desc': 'Safety checked'},
+      {'status': 'out_for_delivery', 'title': 'On The Way', 'desc': 'Driver en route'},
+      {'status': 'delivered', 'title': 'Delivered', 'desc': 'Enjoy your cooking gas'},
     ];
 
-    int currentIdx = 0;
-    if (order.status == 'confirmed') currentIdx = 0;
-    if (order.status == 'preparing') currentIdx = 1;
-    if (order.status == 'out_for_delivery') currentIdx = 2;
-    if (order.status == 'delivered') currentIdx = 3;
+    final statusOrder = ['pending_payment', 'confirmed', 'preparing', 'out_for_delivery', 'delivered'];
+    final currentIdx = statusOrder.indexOf(order.status);
 
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'DELIVERY STATUS TIMELINE',
-            style: TextStyle(
+          Text(
+            'DELIVERY STATUS',
+            style: GoogleFonts.plusJakartaSans(
               color: AppColors.textMuted,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -236,9 +258,11 @@ class OrderTrackingScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          ...List.generate(steps.length, (idx) {
-            final isDone = idx <= currentIdx;
-            final isCurrent = idx == currentIdx;
+          ...List.generate(steps.length, (i) {
+            final step = steps[i];
+            final stepIdx = statusOrder.indexOf(step['status']!);
+            final isDone = currentIdx >= stepIdx;
+            final isCurrent = currentIdx == stepIdx;
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,59 +274,59 @@ class OrderTrackingScreen extends StatelessWidget {
                       height: 22,
                       decoration: BoxDecoration(
                         color: isDone
-                            ? AppColors.brandOrange
-                            : Colors.white12,
+                            ? AppColors.primaryBlue
+                            : Colors.transparent,
                         shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDone
+                              ? AppColors.primaryBlue
+                              : AppColors.borderColor,
+                          width: 2,
+                        ),
                       ),
-                      child: Center(
-                        child: isDone
-                            ? const Icon(Icons.check,
-                                color: Colors.white, size: 14)
-                            : Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white38,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                      ),
+                      child: isDone
+                          ? const Icon(Icons.check,
+                              color: Colors.white, size: 14)
+                          : null,
                     ),
-                    if (idx < steps.length - 1)
+                    if (i < steps.length - 1)
                       Container(
                         width: 2,
-                        height: 32,
-                        color: idx < currentIdx
-                            ? AppColors.brandOrange
-                            : Colors.white12,
+                        height: 28,
+                        color: isDone
+                            ? AppColors.primaryBlue
+                            : AppColors.borderColor,
                       ),
                   ],
                 ),
                 const SizedBox(width: 14),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        steps[idx]['title']!,
-                        style: TextStyle(
-                          color: isCurrent
-                              ? AppColors.brandOrange
-                              : (isDone ? Colors.white : AppColors.textMuted),
-                          fontSize: 13,
-                          fontWeight:
-                              isCurrent ? FontWeight.w800 : FontWeight.w600,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          step['title']!,
+                          style: GoogleFonts.plusJakartaSans(
+                            color: isDone
+                                ? AppColors.textPrimary
+                                : AppColors.textMuted,
+                            fontSize: 13,
+                            fontWeight:
+                                isCurrent ? FontWeight.w800 : FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Text(
-                        steps[idx]['desc']!,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 11,
+                        Text(
+                          step['desc']!,
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textMuted,
+                            fontSize: 11,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 14),
-                    ],
+                        const SizedBox(height: 14),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -314,70 +338,69 @@ class OrderTrackingScreen extends StatelessWidget {
   }
 
   Widget _buildOrderSummaryCard(AppStateProvider state, OrderModel order) {
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'ORDER DETAILS',
-                style: TextStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              Text(
-                '${order.paymentMethod.toUpperCase()} (${order.paymentStatus})',
-                style: const TextStyle(
-                  color: AppColors.brandCyan,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+          Text(
+            'ORDER DETAILS',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.textMuted,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
           ),
           const SizedBox(height: 12),
           ...order.items.map(
-            (it) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+            (item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${it.quantity}x ${it.product.name} (${order.orderType})',
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    '${item.quantity}x ${item.product.name} (${order.orderType})',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textPrimary,
+                      fontSize: 13,
+                    ),
                   ),
                   Text(
-                    '${state.currency}${it.totalPrice.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700),
+                    '${state.currency}${item.totalPrice.toStringAsFixed(2)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const Divider(color: AppColors.borderColor, height: 20),
+          const SizedBox(height: 10),
+          const Divider(color: AppColors.borderColor, thickness: 1),
+          const SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Total Paid',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               Text(
                 '${state.currency}${order.totalAmount.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: AppColors.brandOrange,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.primaryBlue,
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                 ),

@@ -28,7 +28,10 @@ class CylinderProductModel {
       sizeKg: (json['size_kg'] as num?)?.toDouble() ?? 9.0,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      imageUrl: json['image_url'] ?? '',
+      imageUrl: (json['image_url'] != null &&
+              json['image_url'].toString().trim().isNotEmpty)
+          ? json['image_url']
+          : 'assets/images/cylinder.jpg',
       isActive: json['is_active'] ?? true,
       popular: json['popular'] ?? false,
     );

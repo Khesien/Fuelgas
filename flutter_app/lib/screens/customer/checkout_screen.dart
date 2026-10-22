@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/order_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../../providers/cart_provider.dart';
-import '../common/glass_container.dart';
 import 'order_tracking_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -38,9 +38,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final grandTotal = cart.getGrandTotal(provider);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Checkout & Delivery',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        title: Text(
+          'Checkout & Delivery',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -48,35 +61,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Expanded(
               child: SingleChildScrollView(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Delivery Address Card
                     _buildAddressCard(state),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Order Summary Item
                     _buildOrderItemsCard(cart, provider, state),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Promo Code Section
                     _buildPromoSection(cart, state),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Payment Methods Selector
-                    const Text(
+                    Text(
                       'PAYMENT METHOD',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textMuted,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     _buildPaymentSelector(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Price Breakdown Card
                     _buildPriceBreakdown(
@@ -109,17 +122,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildAddressCard(AppStateProvider state) {
     final addr = state.selectedAddress;
 
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'DELIVERY ADDRESS',
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   color: AppColors.textMuted,
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
@@ -128,10 +146,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               InkWell(
                 onTap: () => _showAddressPicker(context, state),
-                child: const Text(
+                child: Text(
                   'Change',
-                  style: TextStyle(
-                    color: AppColors.brandOrange,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.primaryBlue,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -143,25 +161,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.location_on,
-                  color: AppColors.brandOrange, size: 20),
-              const SizedBox(width: 10),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.tileBlueBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.location_on,
+                    color: AppColors.primaryBlue, size: 20),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      addr?.label ?? 'No address selected',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      addr?.label ?? 'Home',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      addr?.fullAddress ?? 'Tap Change to add or select a delivery address',
-                      style: const TextStyle(
+                      addr?.fullAddress ??
+                          '123 Molepolole Road, Gaborone',
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textSecondary,
                         fontSize: 12,
                       ),
@@ -183,37 +210,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     final unitPrice = cart.getUnitPrice(provider);
 
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
-              color: Colors.white10,
+              color: const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.propane_tank,
-                color: AppColors.brandOrange, size: 28),
+            padding: const EdgeInsets.all(4),
+            child: Image.asset(
+              'assets/images/cylinder.jpg',
+              fit: BoxFit.contain,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '${cart.quantity}x ${prod.name}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${cart.orderType.toUpperCase()} • ${provider.companyName}',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  '${cart.orderType.toUpperCase()} • ${provider?.companyName ?? 'QuickGas Supplies'}',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -222,8 +258,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           Text(
             '${state.currency}${(unitPrice * cart.quantity).toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: Colors.white,
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
@@ -234,20 +270,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPromoSection(CartProvider cart, AppStateProvider state) {
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.discount,
-                  color: AppColors.brandAmber, size: 18),
+              const Icon(Icons.discount_outlined,
+                  color: AppColors.flameAmber, size: 18),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Promotions & Discounts',
-                style: TextStyle(
-                  color: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -258,65 +299,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: _promoController,
-                  textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter promo code',
-                    isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: SizedBox(
+                  height: 42,
+                  child: TextField(
+                    controller: _promoController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter promo code (e.g. WELCOME)',
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  final code = _promoController.text.trim().toUpperCase();
-                  final found = state.promotions.firstWhere(
-                    (p) => p.code == code && p.isActive,
-                    orElse: () => state.promotions.first,
-                  );
-                  if (found.code == code) {
-                    cart.applyPromo(found);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Promo ${found.code} applied!'),
-                        backgroundColor: AppColors.brandGreen,
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Invalid or expired promo code.'),
-                        backgroundColor: AppColors.statusCancelled,
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              SizedBox(
+                height: 42,
+                child: ElevatedButton(
+                  onPressed: () {
+                    final code = _promoController.text.trim();
+                    if (code.isNotEmpty) {
+                      cart.applyPromoCode(code, state.promotions);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Promo code applied!')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text('Apply'),
                 ),
-                child: const Text('Apply'),
               ),
             ],
           ),
-          if (cart.appliedPromo != null) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.check_circle,
-                    color: AppColors.brandGreen, size: 14),
-                const SizedBox(width: 6),
-                Text(
-                  'Applied: ${cart.appliedPromo!.code} (${cart.appliedPromo!.description})',
-                  style: const TextStyle(
-                      color: AppColors.brandGreen, fontSize: 11),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
@@ -325,107 +344,122 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildPaymentSelector() {
     return Column(
       children: [
-        _buildPaymentOption(
-          id: 'mobile_money',
-          title: 'Mobile Money (Express)',
-          subtitle: 'Orange Money, Mascom MyZaka',
+        _buildPaymentOptionTile(
+          value: 'mobile_money',
+          title: 'Mobile Money (Orange / Mascom)',
           icon: Icons.phone_android,
+          iconColor: const Color(0xFFFF6600),
+          extraWidget: _selectedPaymentMethod == 'mobile_money'
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: const Text('Orange Money'),
+                        selected: _selectedMobileProvider == 'Orange Money',
+                        selectedColor: AppColors.tileOrangeBg,
+                        labelStyle: TextStyle(
+                          color: _selectedMobileProvider == 'Orange Money'
+                              ? AppColors.tileOrangeIcon
+                              : AppColors.textSecondary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 11,
+                        ),
+                        onSelected: (_) => setState(
+                            () => _selectedMobileProvider = 'Orange Money'),
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('Mascom MyZaka'),
+                        selected: _selectedMobileProvider == 'Mascom MyZaka',
+                        selectedColor: const Color(0xFFFEFCE8),
+                        labelStyle: TextStyle(
+                          color: _selectedMobileProvider == 'Mascom MyZaka'
+                              ? const Color(0xFFCA8A04)
+                              : AppColors.textSecondary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 11,
+                        ),
+                        onSelected: (_) => setState(
+                            () => _selectedMobileProvider = 'Mascom MyZaka'),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
         ),
-        if (_selectedPaymentMethod == 'mobile_money')
-          Padding(
-            padding: const EdgeInsets.only(left: 36, bottom: 8, top: 4),
-            child: Row(
-              children: [
-                _buildSubProviderChip('Orange Money'),
-                const SizedBox(width: 8),
-                _buildSubProviderChip('Mascom MyZaka'),
-              ],
-            ),
-          ),
-        const SizedBox(height: 8),
-        _buildPaymentOption(
-          id: 'card',
+        const SizedBox(height: 10),
+        _buildPaymentOptionTile(
+          value: 'card',
           title: 'Credit / Debit Card',
-          subtitle: 'Visa, Mastercard, Instant EFT',
           icon: Icons.credit_card,
+          iconColor: AppColors.primaryBlue,
         ),
-        const SizedBox(height: 8),
-        _buildPaymentOption(
-          id: 'cash',
+        const SizedBox(height: 10),
+        _buildPaymentOptionTile(
+          value: 'cash_on_delivery',
           title: 'Cash on Delivery',
-          subtitle: 'Pay exact cash upon inspection',
           icon: Icons.payments_outlined,
+          iconColor: AppColors.statusDelivered,
         ),
       ],
     );
   }
 
-  Widget _buildPaymentOption({
-    required String id,
+  Widget _buildPaymentOptionTile({
+    required String value,
     required String title,
-    required String subtitle,
     required IconData icon,
+    required Color iconColor,
+    Widget? extraWidget,
   }) {
-    final isSelected = _selectedPaymentMethod == id;
+    final isSelected = _selectedPaymentMethod == value;
 
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      backgroundColor: isSelected
-          ? AppColors.brandOrange.withOpacity(0.12)
-          : AppColors.bgCard,
-      borderColor: isSelected ? AppColors.brandOrange : AppColors.borderColor,
-      onTap: () => setState(() => _selectedPaymentMethod = id),
-      child: Row(
-        children: [
-          Icon(icon,
-              color: isSelected ? AppColors.brandOrange : Colors.white70,
-              size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () => setState(() => _selectedPaymentMethod = value),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.tileBlueBg : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryBlue : AppColors.borderColor,
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : AppColors.textPrimary,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                Icon(icon, color: iconColor, size: 22),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                      color: AppColors.textSecondary, fontSize: 11),
+                Radio<String>(
+                  value: value,
+                  groupValue: _selectedPaymentMethod,
+                  activeColor: AppColors.primaryBlue,
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() => _selectedPaymentMethod = val);
+                    }
+                  },
                 ),
               ],
             ),
-          ),
-          Radio<String>(
-            value: id,
-            groupValue: _selectedPaymentMethod,
-            activeColor: AppColors.brandOrange,
-            onChanged: (val) =>
-                setState(() => _selectedPaymentMethod = val ?? 'mobile_money'),
-          ),
-        ],
+            if (extraWidget != null) extraWidget,
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildSubProviderChip(String name) {
-    final isSelected = _selectedMobileProvider == name;
-    return ChoiceChip(
-      label: Text(name),
-      selected: isSelected,
-      selectedColor: AppColors.brandOrange,
-      backgroundColor: AppColors.bgCard,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : AppColors.textSecondary,
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
-      ),
-      onSelected: (_) => setState(() => _selectedMobileProvider = name),
     );
   }
 
@@ -436,52 +470,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required double discount,
     required double grandTotal,
   }) {
-    return GlassContainer(
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Column(
         children: [
-          _buildRow('Subtotal', '${state.currency}${subtotal.toStringAsFixed(2)}'),
+          _buildRow('Subtotal',
+              '${state.currency}${subtotal.toStringAsFixed(2)}'),
           const SizedBox(height: 8),
-          _buildRow(
-              'Delivery Fee', '${state.currency}${deliveryFee.toStringAsFixed(2)}'),
+          _buildRow('Delivery Fee',
+              '${state.currency}${deliveryFee.toStringAsFixed(2)}'),
           if (discount > 0) ...[
             const SizedBox(height: 8),
-            _buildRow(
-              'Discount',
-              '-${state.currency}${discount.toStringAsFixed(2)}',
-              valueColor: AppColors.brandGreen,
-            ),
+            _buildRow('Discount',
+                '-${state.currency}${discount.toStringAsFixed(2)}',
+                valueColor: AppColors.statusDelivered),
           ],
-          const Divider(color: AppColors.borderColor, height: 24),
+          const SizedBox(height: 12),
+          const Divider(color: AppColors.borderColor, thickness: 1),
+          const SizedBox(height: 10),
           _buildRow(
-            'Grand Total',
+            'Total Amount',
             '${state.currency}${grandTotal.toStringAsFixed(2)}',
             isBold: true,
-            valueColor: AppColors.brandOrange,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRow(String label, String value,
+  Widget _buildRow(String title, String value,
       {bool isBold = false, Color? valueColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
-          style: TextStyle(
-            color: isBold ? Colors.white : AppColors.textSecondary,
-            fontSize: isBold ? 15 : 13,
+          title,
+          style: GoogleFonts.plusJakartaSans(
+            color: isBold ? AppColors.textPrimary : AppColors.textSecondary,
+            fontSize: isBold ? 14 : 12,
             fontWeight: isBold ? FontWeight.w800 : FontWeight.w500,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
-            color: valueColor ?? Colors.white,
-            fontSize: isBold ? 17 : 13,
+          style: GoogleFonts.plusJakartaSans(
+            color: valueColor ??
+                (isBold ? AppColors.primaryBlue : AppColors.textPrimary),
+            fontSize: isBold ? 16 : 13,
             fontWeight: isBold ? FontWeight.w900 : FontWeight.w700,
           ),
         ),
@@ -497,9 +537,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required double discount,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: const BoxDecoration(
-        color: AppColors.bgSecondary,
+        color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.borderColor)),
       ),
       child: Row(
@@ -509,17 +549,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'AMOUNT DUE',
-                style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textMuted,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               Text(
                 '${state.currency}${grandTotal.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
@@ -531,7 +572,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ? null
                 : () async {
                     setState(() => _isProcessing = true);
-                    await Future.delayed(const Duration(milliseconds: 700));
+                    await Future.delayed(const Duration(milliseconds: 600));
 
                     final prod = cart.selectedProduct!;
                     final unitPrice =
@@ -576,6 +617,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       );
                     }
                   },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             child: _isProcessing
                 ? const SizedBox(
                     width: 20,
@@ -585,11 +633,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       color: Colors.white,
                     ),
                   )
-                : const Row(
+                : Row(
                     children: [
-                      Text('Confirm & Pay'),
-                      SizedBox(width: 8),
-                      Icon(Icons.shield, size: 18),
+                      Text(
+                        'Confirm & Pay',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.shield_outlined,
+                          size: 18, color: Colors.white),
                     ],
                   ),
           ),
@@ -601,7 +656,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   void _showAddressPicker(BuildContext context, AppStateProvider state) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSecondary,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -612,24 +667,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Choose Saved Delivery Address',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 12),
               ...state.addresses.map(
                 (a) => ListTile(
                   title: Text(a.label,
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700)),
+                      style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700)),
                   subtitle: Text(a.fullAddress,
-                      style: const TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                           color: AppColors.textSecondary, fontSize: 11)),
                   trailing: a.addressId == state.selectedAddressId
-                      ? const Icon(Icons.check, color: AppColors.brandOrange)
+                      ? const Icon(Icons.check, color: AppColors.primaryBlue)
                       : null,
                   onTap: () {
                     state.setSelectedAddress(a.addressId);

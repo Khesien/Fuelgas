@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../providers/app_state_provider.dart';
-import 'glass_container.dart';
 
 class RoleSwitchSheet extends StatelessWidget {
   const RoleSwitchSheet({super.key});
@@ -15,7 +15,7 @@ class RoleSwitchSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
-        color: AppColors.bgSecondary,
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -25,24 +25,25 @@ class RoleSwitchSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Switch Operating Role',
-                style: TextStyle(
-                  color: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                icon: const Icon(Icons.close, color: AppColors.textMuted),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'Experience the platform from Customer, Delivery Driver, or Provider Admin perspective.',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 20),
 
@@ -52,7 +53,7 @@ class RoleSwitchSheet extends StatelessWidget {
             title: 'Customer Experience',
             subtitle: 'Browse cylinders, select brand, order refill & track live',
             icon: Icons.person_pin,
-            iconColor: AppColors.brandOrange,
+            iconColor: AppColors.primaryBlue,
             isSelected: state.activeRole == UserRole.customer,
             onTap: () {
               state.setActiveRole(UserRole.customer);
@@ -67,7 +68,7 @@ class RoleSwitchSheet extends StatelessWidget {
             title: 'Driver / Service Provider',
             subtitle: 'Accept jobs, navigate route, deliver with OTP & earn payouts',
             icon: Icons.local_shipping,
-            iconColor: AppColors.brandCyan,
+            iconColor: AppColors.statusOpen,
             isSelected: state.activeRole == UserRole.driver,
             onTap: () {
               state.setActiveRole(UserRole.driver);
@@ -82,7 +83,7 @@ class RoleSwitchSheet extends StatelessWidget {
             title: 'Provider Admin / Depot Hub',
             subtitle: 'Manage cylinder stock levels, view active fleet & orders',
             icon: Icons.admin_panel_settings,
-            iconColor: AppColors.statusPreparing,
+            iconColor: AppColors.tilePurpleIcon,
             isSelected: state.activeRole == UserRole.providerAdmin,
             onTap: () {
               state.setActiveRole(UserRole.providerAdmin);
@@ -104,50 +105,57 @@ class RoleSwitchSheet extends StatelessWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      backgroundColor: isSelected
-          ? iconColor.withOpacity(0.12)
-          : AppColors.bgCard,
-      borderColor: isSelected ? iconColor : AppColors.borderColor,
+    return InkWell(
       onTap: onTap,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.18),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: iconColor, size: 22),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected ? iconColor.withOpacity(0.08) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? iconColor : AppColors.borderColor,
+            width: isSelected ? 1.5 : 1.0,
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : AppColors.textPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
             ),
-          ),
-          if (isSelected)
-            Icon(Icons.check_circle, color: iconColor, size: 20),
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textMuted,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: iconColor, size: 20),
+          ],
+        ),
       ),
     );
   }

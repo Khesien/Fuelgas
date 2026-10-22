@@ -39,7 +39,7 @@ class AppAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: radius,
-      backgroundColor: backgroundColor ?? AppColors.brandOrange.withOpacity(0.2),
+      backgroundColor: backgroundColor ?? AppColors.primaryBlue,
       child: _buildFallback(initials),
     );
   }

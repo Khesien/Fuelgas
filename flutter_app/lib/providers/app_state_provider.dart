@@ -120,8 +120,26 @@ class AppStateProvider extends ChangeNotifier {
   StreamSubscription? _driverSubscription;
 
   AppStateProvider() {
-    // Nothing is loaded until the user authenticates.
-    // Call loadUserData(userId) after login.
+    _initSupabaseListener();
+  }
+
+  void _initSupabaseListener() {
+    if (_supabase.isReady) {
+      _loadPlatformData();
+
+      final currentSession = _supabase.client!.auth.currentSession;
+      if (currentSession != null) {
+        loadUserData(currentSession.user.id);
+      }
+      _supabase.client!.auth.onAuthStateChange.listen((data) {
+        final session = data.session;
+        if (session != null && _currentUser?.userId != session.user.id) {
+          loadUserData(session.user.id);
+        } else if (session == null && _currentUser != null) {
+          signOut();
+        }
+      });
+    }
   }
 
   @override
@@ -150,15 +168,47 @@ class AppStateProvider extends ChangeNotifier {
         return;
       }
 
-      // Load user profile
-      final userRow = await _supabase.client!
-          .from('users')
-          .select()
-          .eq('user_id', userId)
-          .maybeSingle();
+      // Load user profile (check 'profiles' table from schema.sql, fallback to 'users')
+      Map<String, dynamic>? userRow;
+      try {
+        userRow = await _supabase.client!
+            .from('profiles')
+            .select()
+            .eq('user_id', userId)
+            .maybeSingle();
+      } catch (_) {
+        try {
+          userRow = await _supabase.client!
+              .from('users')
+              .select()
+              .eq('user_id', userId)
+              .maybeSingle();
+        } catch (_) {}
+      }
 
       if (userRow != null) {
         _currentUser = UserModel.fromJson(userRow);
+
+        // Detect role and route properly
+        final roleStr = (userRow['role'] as String?)?.toLowerCase();
+        if (roleStr == 'driver') {
+          _activeRole = UserRole.driver;
+          final driverRow = await _supabase.client!
+              .from('drivers')
+              .select('driver_id')
+              .eq('user_id', userId)
+              .maybeSingle();
+          if (driverRow != null) {
+            await loadDriverData(driverRow['driver_id']);
+            return;
+          }
+        } else if (roleStr == 'provider_admin') {
+          _activeRole = UserRole.providerAdmin;
+        } else if (roleStr == 'super_admin') {
+          _activeRole = UserRole.superAdmin;
+        } else {
+          _activeRole = UserRole.customer;
+        }
       }
 
       // Load addresses
@@ -268,14 +318,25 @@ class AppStateProvider extends ChangeNotifier {
         .map((r) => CylinderProductModel.fromJson(r))
         .toList();
 
-    // Providers (with pricing)
-    final providerRows = await _supabase.client!
-        .from('providers')
-        .select('*, provider_prices(*)')
-        .eq('compliance_status', 'approved')
-        .order('rating', ascending: false);
-    _providers = (providerRows as List)
-        .map((r) => GasProviderModel.fromJson(r))
+    // Providers (with pricing) - check 'gas_providers' first as in schema.sql, fallback to 'providers'
+    List<dynamic> providerRows = [];
+    try {
+      providerRows = await _supabase.client!
+          .from('gas_providers')
+          .select('*, provider_prices(*)')
+          .eq('compliance_status', 'approved')
+          .order('rating', ascending: false);
+    } catch (_) {
+      try {
+        providerRows = await _supabase.client!
+            .from('providers')
+            .select('*, provider_prices(*)')
+            .eq('compliance_status', 'approved')
+            .order('rating', ascending: false);
+      } catch (_) {}
+    }
+    _providers = providerRows
+        .map((r) => GasProviderModel.fromJson(r as Map<String, dynamic>))
         .toList();
 
     if (_providers.isNotEmpty) {

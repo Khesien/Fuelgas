@@ -69,6 +69,20 @@ class GasProviderModel {
       });
     }
 
+    if (json['provider_prices'] is List) {
+      for (final item in json['provider_prices'] as List) {
+        if (item is Map) {
+          final pId = item['product_id']?.toString() ?? '';
+          if (pId.isNotEmpty) {
+            parsedPrices[pId] = PriceTier(
+              refill: (item['refill_price'] as num?)?.toDouble() ?? 135.0,
+              exchange: (item['exchange_price'] as num?)?.toDouble() ?? 220.0,
+            );
+          }
+        }
+      }
+    }
+
     return GasProviderModel(
       providerId: json['provider_id'] ?? '',
       companyName: json['company_name'] ?? '',

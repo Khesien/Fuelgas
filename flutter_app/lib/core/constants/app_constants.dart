@@ -1,5 +1,7 @@
 class AppConstants {
-  static const String appName = 'GasExpress Botswana';
+  static const String appName = 'FuelGas';
+  static const String appTagline = 'Safe Gas. Warm Homes.';
+  static const String appDescription = 'Your trusted LPG gas delivery partner';
   static const String defaultCurrency = 'P';
   static const double defaultDeliveryFee = 25.00;
 

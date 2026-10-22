@@ -31,15 +31,15 @@ class _ProviderMainNavState extends State<ProviderMainNav> {
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          color: AppColors.bgSecondary,
+          color: Colors.white,
           border: Border(top: BorderSide(color: AppColors.borderColor)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (idx) => setState(() => _currentIndex = idx),
-          backgroundColor: AppColors.bgSecondary,
+          backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: AppColors.brandCyan,
+          selectedItemColor: AppColors.primaryBlue,
           unselectedItemColor: AppColors.textMuted,
           selectedLabelStyle:
               const TextStyle(fontWeight: FontWeight.w800, fontSize: 11),

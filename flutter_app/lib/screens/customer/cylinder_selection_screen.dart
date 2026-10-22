@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/product_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../../providers/cart_provider.dart';
-import '../common/app_avatar.dart';
-import '../common/glass_container.dart';
 import 'checkout_screen.dart';
 
 class CylinderSelectionScreen extends StatefulWidget {
@@ -41,9 +40,22 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
     final subtotal = cart.getSubtotal(provider);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Configure Cylinder Order',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        title: Text(
+          'Select Cylinder',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -51,25 +63,25 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
             Expanded(
               child: SingleChildScrollView(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Provider Banner
                     _buildProviderBadge(provider),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Cylinder Size Selector Carousel
-                    const Text(
-                      'CYLINDER SIZE',
-                      style: TextStyle(
+                    Text(
+                      'POPULAR CYLINDER SIZES',
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textMuted,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     _buildSizeChips(state, cart),
                     const SizedBox(height: 20),
 
@@ -78,30 +90,30 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
                     const SizedBox(height: 20),
 
                     // Order Type Toggle: Refill vs Exchange
-                    const Text(
+                    Text(
                       'SERVICE TYPE',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textMuted,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     _buildOrderTypeToggle(cart, provider),
                     const SizedBox(height: 20),
 
                     // Quantity Stepper
-                    const Text(
+                    Text(
                       'QUANTITY',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textMuted,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     _buildQuantityStepper(cart),
                     const SizedBox(height: 20),
                   ],
@@ -118,27 +130,29 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
   }
 
   Widget _buildProviderBadge(dynamic provider) {
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.tileBlueBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Row(
         children: [
-          ProviderLogoWidget(
-            logoUrl: provider.logoUrl,
-            companyName: provider.companyName,
-            size: 28,
-          ),
+          const Icon(Icons.storefront_rounded,
+              color: AppColors.primaryBlue, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Supplied by ${provider.companyName}',
-              style: const TextStyle(
-                color: Colors.white,
+              'Supplied by ${provider?.companyName ?? 'QuickGas Supplies'}',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          const Icon(Icons.verified, color: AppColors.brandCyan, size: 16),
+          const Icon(Icons.verified, color: AppColors.primaryBlue, size: 16),
         ],
       ),
     );
@@ -158,15 +172,15 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
           return ChoiceChip(
             label: Text(prod.size),
             selected: isSelected,
-            selectedColor: AppColors.brandOrange,
-            backgroundColor: AppColors.bgCard,
-            labelStyle: TextStyle(
+            selectedColor: AppColors.primaryBlue,
+            backgroundColor: Colors.white,
+            labelStyle: GoogleFonts.plusJakartaSans(
               color: isSelected ? Colors.white : AppColors.textSecondary,
               fontWeight: FontWeight.w800,
               fontSize: 13,
             ),
             side: BorderSide(
-              color: isSelected ? AppColors.brandOrange : AppColors.borderColor,
+              color: isSelected ? AppColors.primaryBlue : AppColors.borderColor,
             ),
             onSelected: (val) {
               if (val) {
@@ -182,20 +196,34 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
 
   Widget _buildProductHeroCard(
       AppStateProvider state, CartProvider cart, double unitPrice) {
-    return GlassContainer(
-      padding: const EdgeInsets.all(20),
-      backgroundColor: const Color(0xFF131B2E),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 76,
+            height: 76,
             decoration: BoxDecoration(
-              color: AppColors.brandOrange.withOpacity(0.1),
-              shape: BoxShape.circle,
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.propane_tank,
-                color: AppColors.brandOrange, size: 44),
+            padding: const EdgeInsets.all(6),
+            child: Image.asset(
+              'assets/images/cylinder.jpg',
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -204,27 +232,27 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
               children: [
                 Text(
                   _currentProduct.name,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   _currentProduct.description,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textMuted,
                     fontSize: 11,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
-                  '${state.currency}${unitPrice.toStringAsFixed(2)} / cylinder',
-                  style: const TextStyle(
-                    color: AppColors.brandCyan,
+                  '${state.currency}${unitPrice.toStringAsFixed(2)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.primaryBlue,
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                   ),
@@ -238,9 +266,9 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
   }
 
   Widget _buildOrderTypeToggle(CartProvider cart, dynamic provider) {
-    final prices = provider.prices[_currentProduct.productId];
-    final refillPrice = prices?.refill ?? 195.0;
-    final exchangePrice = prices?.exchange ?? 320.0;
+    final prices = provider?.prices[_currentProduct.productId];
+    final refillPrice = prices?.refill ?? 135.0;
+    final exchangePrice = prices?.exchange ?? 135.0;
 
     return Row(
       children: [
@@ -274,74 +302,91 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GlassContainer(
-      padding: const EdgeInsets.all(14),
-      backgroundColor: isSelected
-          ? AppColors.brandOrange.withOpacity(0.15)
-          : AppColors.bgCard,
-      borderColor: isSelected ? AppColors.brandOrange : AppColors.borderColor,
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.tileBlueBg : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryBlue : AppColors.borderColor,
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-              if (isSelected)
-                const Icon(Icons.check_circle,
-                    color: AppColors.brandOrange, size: 16),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-                color: AppColors.textSecondary, fontSize: 10),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'P${price.toStringAsFixed(0)}',
-            style: TextStyle(
-              color: isSelected ? AppColors.brandOrange : Colors.white70,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
+                if (isSelected)
+                  const Icon(Icons.check_circle,
+                      color: AppColors.primaryBlue, size: 16),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textMuted,
+                fontSize: 10,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'P${price.toStringAsFixed(0)}',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.primaryBlue,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildQuantityStepper(CartProvider cart) {
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderColor),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Number of cylinders',
-            style: TextStyle(
-                color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Row(
             children: [
               IconButton(
                 onPressed: cart.decrementQuantity,
                 icon: const Icon(Icons.remove_circle_outline,
-                    color: AppColors.brandOrange),
+                    color: AppColors.primaryBlue),
               ),
               Text(
                 '${cart.quantity}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
@@ -349,7 +394,7 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
               IconButton(
                 onPressed: cart.incrementQuantity,
                 icon: const Icon(Icons.add_circle_outline,
-                    color: AppColors.brandOrange),
+                    color: AppColors.primaryBlue),
               ),
             ],
           ),
@@ -361,9 +406,9 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
   Widget _buildBottomBar(BuildContext context, AppStateProvider state,
       CartProvider cart, double subtotal) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: const BoxDecoration(
-        color: AppColors.bgSecondary,
+        color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.borderColor)),
       ),
       child: Row(
@@ -373,17 +418,18 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'SUBTOTAL',
-                style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textMuted,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               Text(
                 '${state.currency}${subtotal.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textPrimary,
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
@@ -399,11 +445,24 @@ class _CylinderSelectionScreenState extends State<CylinderSelectionScreen> {
                 ),
               );
             },
-            child: const Row(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Row(
               children: [
-                Text('Checkout'),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_forward, size: 18),
+                Text(
+                  'Checkout',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_forward, size: 18, color: Colors.white),
               ],
             ),
           ),
