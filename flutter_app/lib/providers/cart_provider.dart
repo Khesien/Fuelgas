@@ -57,6 +57,19 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Called by checkout_screen with a code string + list of available promotions
+  void applyPromoCode(String code, List<PromotionModel> promotions) {
+    final match = promotions.where(
+      (p) => p.code.toLowerCase() == code.trim().toLowerCase() && p.isActive,
+    );
+    if (match.isNotEmpty) {
+      _appliedPromo = match.first;
+    } else {
+      _appliedPromo = null;
+    }
+    notifyListeners();
+  }
+
   double getUnitPrice(GasProviderModel? provider) {
     if (_selectedProduct == null) return 0.0;
     if (provider == null) return _selectedProduct!.basePrice;
